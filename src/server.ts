@@ -1,5 +1,5 @@
 import { Server } from 'http'
-import { app } from './app'
+import app from './app'
 import { envVars } from './app/config/env'
 import mongoose from 'mongoose'
 
