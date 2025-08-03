@@ -6,12 +6,12 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
         const user = await UserService.createUser(req.body)
 
-        const userObj = user.toObject();
-        const { _id, password, ...rest } = userObj
+        // const userObj = user.toObject();
+        // const { _id, password, ...rest } = userObj
 
         res.status(httpStatus.CREATED).json({
             message: 'User created successfully',
-            data: rest
+            data: user
         })
 
     } catch (error) {

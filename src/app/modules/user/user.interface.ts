@@ -27,7 +27,7 @@ export interface IUser {
     password: string;
     role: Role;
     status: IsActive;
-    walletId?: Types.ObjectId;
+    wallet?: Types.ObjectId;
     createdAt?: Date;
 
 }

@@ -25,7 +25,11 @@ const userSchema = new Schema<IUser>({
         enum: Object.values(IsActive),
         default: IsActive.ACTIVE
     },
-    auths: [authProviderSchema]
+    auths: [authProviderSchema],
+    wallet: {
+        type: Schema.Types.ObjectId,
+        ref: 'Wallet',
+    }
 },
     {
         timestamps: true,
