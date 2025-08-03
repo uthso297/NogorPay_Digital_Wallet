@@ -12,6 +12,7 @@ export enum IsActive {
     BOLCKED = 'BOLCKED'
 }
 
+
 export interface IAuthProvider {
     provider: "google" | "credentials";
     providerId: string;
@@ -28,7 +29,5 @@ export interface IUser {
     status: IsActive;
     walletId?: Types.ObjectId;
     createdAt?: Date;
-    commissionRate?: number;
-    isApproved?: boolean;
 
 }
