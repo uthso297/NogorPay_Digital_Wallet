@@ -51,7 +51,20 @@ const getMe = async (req: Request, res: Response, next: NextFunction) => {
     }
 }
 
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: false
+    })
+    res.status(httpStatus.OK).json({
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Logged out Successfully",
+    })
+}
+
 export const AuthController = {
     credentialsLogin,
-    getMe
+    getMe,
+    logout
 }

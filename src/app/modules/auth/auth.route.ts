@@ -11,5 +11,6 @@ router.get('/', (req: Request, res: Response) => {
 
 router.post('/login', AuthController.credentialsLogin)
 router.get('/me', checkAuth(...Object.values(Role)), AuthController.getMe)
+router.get('/logout', AuthController.logout)
 
 export const AuthRoutes = router
