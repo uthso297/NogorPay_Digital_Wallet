@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-// import { AuthServices } from "./auth.service";
 import httpStatus from 'http-status-codes'
 import passport from "passport";
 import AppError from "../../errorHelper/AppError";
 import { createUserTokens } from "../../utils/userTokens";
+import { JwtPayload } from "jsonwebtoken";
+import { UserService } from "../user/user.service";
+import { AuthServices } from "./auth.service";
 const credentialsLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // const loginInfo = await AuthServices.credentialsLogin(req.body)
@@ -26,6 +28,7 @@ const credentialsLogin = async (req: Request, res: Response, next: NextFunction)
             res.status(httpStatus.OK).json({
                 success: true,
                 message: 'User logged in successfully',
+                userToken
             })
         })(req, res, next);
 
@@ -34,6 +37,21 @@ const credentialsLogin = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
+const getMe = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const decodedToken = req.user as JwtPayload
+        const result = await AuthServices.getMe(decodedToken.userId)
+        res.status(httpStatus.OK).json({
+            success: true,
+            message: 'Your profile retrived successfuly',
+            data: result
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const AuthController = {
-    credentialsLogin
+    credentialsLogin,
+    getMe
 }

@@ -30,7 +30,19 @@ import { generateToken } from "../../utils/jwt";
 //     }
 // }
 
+const getMe = async (userId: string) => {
+    const userInfo = await User.findById(userId)
+        .select("-_id -password")
+        .populate({
+            path: "wallet",
+            select: "balance isActive -_id",
+        });
+
+    return userInfo;
+};
+
 
 export const AuthServices = {
-    // credentialsLogin
+    // credentialsLogin,
+    getMe
 }
