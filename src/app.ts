@@ -20,7 +20,7 @@ app.use('/api', router)
 
 app.get('/', (req: Request, res: Response) => {
     res.status(httpStatus.OK).json({
-        message: 'Welcome to NogorPay,a Digital Wallet Server😍'
+        message: 'Welcome to NogorPay,a Digital Wallet Server 😍'
     })
 })
 

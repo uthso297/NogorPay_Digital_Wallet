@@ -27,7 +27,7 @@ const credentialsLogin = async (req: Request, res: Response, next: NextFunction)
 
             res.status(httpStatus.OK).json({
                 success: true,
-                message: 'User logged in successfully',
+                message: 'Log in successfull',
                 userToken
             })
         })(req, res, next);

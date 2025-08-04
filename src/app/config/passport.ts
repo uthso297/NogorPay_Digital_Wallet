@@ -2,13 +2,18 @@ import passport from "passport";
 import { Strategy as LocalStratrgy } from "passport-local";
 import { User } from "../modules/user/user.moel";
 import bcryptjs from 'bcryptjs'
+import { Agent } from "../modules/agent/agent.model";
 passport.use(
     new LocalStratrgy({
         usernameField: 'email',
         passwordField: 'password'
     }, async (email: string, password: string, done) => {
 
-        const isUserExist = await User.findOne({ email })
+        let isUserExist = await User.findOne({ email })
+
+        if (!isUserExist) {
+            isUserExist = await Agent.findOne({ email });
+        }
 
         if (!isUserExist) {
             return done("User does not exist")
