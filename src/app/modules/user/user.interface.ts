@@ -9,7 +9,7 @@ export enum Role {
 export enum IsActive {
     ACTIVE = 'ACTIVE',
     INACTIVE = 'INACTIVE',
-    BOLCKED = 'BOLCKED'
+    BLOCKED = 'BLOCKED'
 }
 
 
