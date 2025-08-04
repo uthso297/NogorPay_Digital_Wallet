@@ -15,12 +15,13 @@ export const checkAuth = (...authRoles: string[]) => async (req: Request, res: R
         }
         const verifiedToken = verifyToken(accessToken, envVars.JWT_SECRET) as JwtPayload
         const isUserExist = await User.findOne({ email: verifiedToken.email })
-        if (!isUserExist) {
-            throw new AppError(httpStatus.BAD_REQUEST, "User doesn't Exist")
-        }
         if (!authRoles.includes(verifiedToken.role)) {
 
             throw new AppError(404, 'You are not permitted in this route')
+        }
+
+        if (!isUserExist) {
+            throw new AppError(httpStatus.BAD_REQUEST, "User doesn't Exist")
         }
 
         req.user = verifiedToken

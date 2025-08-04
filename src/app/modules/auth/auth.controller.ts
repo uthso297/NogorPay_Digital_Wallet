@@ -4,7 +4,6 @@ import passport from "passport";
 import AppError from "../../errorHelper/AppError";
 import { createUserTokens } from "../../utils/userTokens";
 import { JwtPayload } from "jsonwebtoken";
-import { UserService } from "../user/user.service";
 import { AuthServices } from "./auth.service";
 const credentialsLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
