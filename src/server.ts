@@ -2,6 +2,7 @@ import { Server } from 'http'
 import app from './app'
 import { envVars } from './app/config/env'
 import mongoose from 'mongoose'
+import { seedAdmin } from './app/utils/seedAdmin'
 
 let server: Server
 
@@ -10,10 +11,10 @@ const startServer = async () => {
 
         await mongoose.connect(envVars.DB_URL)
 
-        console.log('connectet to mongodb');
+        console.log('Connectet to mongodb 🥳');
 
         server = app.listen(envVars.PORT, () => {
-            console.log(`Server is listening on port ${envVars.PORT}`);
+            console.log(`Server is listening on port ${envVars.PORT} 😎`);
         })
     } catch (error) {
         console.log(error);
@@ -22,6 +23,7 @@ const startServer = async () => {
 
 (async () => {
     await startServer()
+    await seedAdmin()
 })()
 
 

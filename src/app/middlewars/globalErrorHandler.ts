@@ -60,6 +60,7 @@ export const globalErrorHandler = async (
 
     // Generic JavaScript/other error
     else if (err instanceof Error) {
+        console.log('coming from global error and Error');
         message = err.message;
     }
 
