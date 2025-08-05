@@ -22,9 +22,17 @@ const addMoney = async (req: Request, res: Response, next: NextFunction) => {
 const getUserTransaction = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { userId } = req.user as JwtPayload
-        const wallets = await Transaction.find({ initiatorIdUser: userId })
+        const transactions = await Transaction.find({
+            $or: [
+                { initiatorIdUser: userId },
+
+                { $and: [{ senderId: userId }, { type: 'SEND' }] },
+
+                { $and: [{ receiverId: userId }, { type: 'RECEIVE' }] },
+            ],
+        }).sort({ timestamp: -1 });
         res.status(200).json({
-            data: wallets
+            data: transactions
         })
     } catch (error) {
         next(error)
@@ -44,8 +52,20 @@ const withdrawMoney = async (req: Request, res: Response, next: NextFunction) =>
     }
 }
 
+const sendMoney = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId } = req.user as JwtPayload
+        const response = await TransactionService.sendMoney(userId, req.body);
+        res.status(200).json(response);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 export const TransactionController = {
     addMoney,
     getUserTransaction,
-    withdrawMoney
+    withdrawMoney,
+    sendMoney
 }

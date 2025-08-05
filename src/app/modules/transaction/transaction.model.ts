@@ -7,8 +7,8 @@ const transactionSchema = new Schema<ITransaction>({
   initiatorIdUser: { type: Schema.Types.ObjectId, ref: "User" },
   initiatorIdAgent: { type: Schema.Types.ObjectId, ref: "Agent" },
   initiatorModel: { type: String, required: true, enum: ["User", "Agent"] },
-  senderWallet: { type: Schema.Types.ObjectId, ref: "Wallet" },
-  receiverWallet: { type: Schema.Types.ObjectId, ref: "Wallet" },
+  senderId: { type: Schema.Types.ObjectId, ref: "User" },
+  receiverId: { type: Schema.Types.ObjectId, ref: "User" },
   status: { type: String, enum: Object.values(TransactionStatus), default: TransactionStatus.COMPLETED },
   timestamp: { type: Date, default: Date.now }
 });

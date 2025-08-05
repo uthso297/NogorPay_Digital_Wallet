@@ -5,7 +5,8 @@ export enum TransactionType {
     WITHDRAW = "WITHDRAW",
     SEND = "SEND",
     CASH_IN = "CASH_IN",
-    CASH_OUT = "CASH_OUT"
+    CASH_OUT = "CASH_OUT",
+    RECEIVE = "RECEIVE"
 }
 
 export enum TransactionStatus {
@@ -18,6 +19,8 @@ export interface ITransaction {
     type: TransactionType;
     amount: number;
     initiatorIdUser?: Types.ObjectId;
+    senderId?: Types.ObjectId;
+    receiverId?: Types.ObjectId;
     initiatorIdAgent?: Types.ObjectId;
     initiatorModel: "User" | "Agent";
     senderWallet?: Types.ObjectId;

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { validateRequest } from "../../middlewars/validateRequest";
-import { addMoneyZodSchema, withdrawZodSchema } from "./transaction.validation";
+import { addMoneyZodSchema, sendMoneyZodSchema, withdrawZodSchema } from "./transaction.validation";
 import { checkAuth } from "../../middlewars/chekAuth";
 import { Role } from "../user/user.interface";
 import { TransactionController } from "./transaction.controller";
@@ -15,5 +15,6 @@ router.get('/', (req: Request, res: Response) => {
 router.get('/user/me',checkAuth(Role.USER),TransactionController.getUserTransaction)
 router.post('/user/addMoney', checkAuth(Role.USER), validateRequest(addMoneyZodSchema), TransactionController.addMoney)
 router.post('/user/withdraw',checkAuth(Role.USER),validateRequest(withdrawZodSchema),TransactionController.withdrawMoney)
+router.post("/user/send", checkAuth(Role.USER), validateRequest(sendMoneyZodSchema), TransactionController.sendMoney);
 
 export const TranscationRoutes = router

@@ -12,6 +12,7 @@ const baseTransactionSchema = z.object({
 
 export const addMoneyZodSchema = baseTransactionSchema.extend({
     type: z.literal(TransactionType.ADD_MONEY),
+
 });
 
 
@@ -22,7 +23,8 @@ export const withdrawZodSchema = baseTransactionSchema.extend({
 
 export const sendMoneyZodSchema = baseTransactionSchema.extend({
     type: z.literal(TransactionType.SEND),
-    receiverWallet: z.string({ error: "Receiver wallet ID is required" }),
+    receiverEmail: z
+        .string({ error: "Receiver email is required" })
 });
 
 
