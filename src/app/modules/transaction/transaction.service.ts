@@ -51,7 +51,55 @@ const addMoney = async (body: Partial<ITransaction>, user: JwtPayload) => {
     }
 }
 
+const withdrawMoney = async (body: Partial<ITransaction>, user: JwtPayload) => {
+    const session = await mongoose.startSession()
+
+    try {
+
+        session.startTransaction()
+
+        const { userId } = user
+        const userInfo = await User.findById(userId).session(session)
+        if (!userInfo || !userInfo.wallet) {
+            throw new AppError(404, "User or wallet not found");
+        }
+
+        const { amount } = body
+        if (!amount || amount <= 0) {
+            throw new AppError(404, "Invalid amount");
+        }
+
+        const walletInfo = await Wallet.findById(userInfo.wallet).session(session)
+        if (!walletInfo) {
+            throw new AppError(404, "Wallet not found");
+        }
+        if (walletInfo.balance < amount) {
+            throw new AppError(404, "Insufficient amount");
+        }
+        walletInfo.balance -= amount;
+        await walletInfo.save({ session })
+        const transaction: Partial<ITransaction> = {
+            type: body.type,
+            amount,
+            initiatorIdUser: userId,
+            initiatorModel: 'User',
+            status: TransactionStatus.COMPLETED
+        }
+
+        const result = await Transaction.create([transaction], { session })
+        await session.commitTransaction();
+        session.endSession();
+
+        return result
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw new AppError(404, 'Transaction failed')
+    }
+}
+
 
 export const TransactionService = {
-    addMoney
+    addMoney,
+    withdrawMoney
 }
