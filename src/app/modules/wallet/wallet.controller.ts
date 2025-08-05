@@ -3,10 +3,14 @@ import { JwtPayload } from "jsonwebtoken";
 import { User } from "../user/user.moel";
 import AppError from "../../errorHelper/AppError";
 import { Wallet } from "./wallet.model";
+import { Agent } from "../agent/agent.model";
 
 export const getMyWallet = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.user as JwtPayload
-    const userInfo = await User.findById(userId)
+    let userInfo = await User.findById(userId)
+    if (!userInfo) {
+        userInfo = await Agent.findById(userId)
+    }
     if (!userInfo) {
         throw new AppError(404, "User not found");
     }
