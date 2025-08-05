@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { TransactionService } from "./transaction.service";
 import { JwtPayload } from "jsonwebtoken";
+import { Transaction } from "./transaction.model";
 
 const addMoney = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -18,6 +19,19 @@ const addMoney = async (req: Request, res: Response, next: NextFunction) => {
 
 }
 
+const getUserTransaction = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId } = req.user as JwtPayload
+        const wallets = await Transaction.find({ initiatorIdUser: userId })
+        res.status(200).json({
+            data: wallets
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const TransactionController = {
-    addMoney
+    addMoney,
+    getUserTransaction
 }

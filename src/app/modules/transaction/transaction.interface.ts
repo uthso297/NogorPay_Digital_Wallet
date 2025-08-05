@@ -17,8 +17,9 @@ export enum TransactionStatus {
 export interface ITransaction {
     type: TransactionType;
     amount: number;
-    // initiatorId: Types.ObjectId;
-    // initiatorModel: "User" | "Agent";
+    initiatorIdUser?: Types.ObjectId;
+    initiatorIdAgent?: Types.ObjectId;
+    initiatorModel: "User" | "Agent";
     senderWallet?: Types.ObjectId;
     receiverWallet?: Types.ObjectId;
     status: TransactionStatus;
