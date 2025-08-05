@@ -16,13 +16,13 @@ const addMoney = async (body: Partial<ITransaction>, user: JwtPayload) => {
 
         const { userId } = user
         const userInfo = await User.findById(userId).session(session)
-        if (!userInfo || !userInfo.wallet) {
-            throw new Error("User or wallet not found");
+        if (!userInfo) {
+            throw new AppError(404, "User not found");
         }
 
         const { amount } = body
         if (!amount || amount <= 0) {
-            throw new Error("Invalid amount");
+            throw new AppError(404, "Invalid amount");
         }
 
         const walletInfo = await Wallet.findById(userInfo.wallet).session(session)

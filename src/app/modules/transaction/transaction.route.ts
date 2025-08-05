@@ -7,10 +7,6 @@ import { TransactionController } from "./transaction.controller";
 
 
 const router = Router()
-router.get('/', (req: Request, res: Response) => {
-    res.send('this is transaction route');
-})
-
 
 router.get('/user/me',checkAuth(Role.USER),TransactionController.getUserTransaction)
 router.post('/user/addMoney', checkAuth(Role.USER), validateRequest(addMoneyZodSchema), TransactionController.addMoney)
