@@ -178,7 +178,7 @@ const cashIn = async (userId: string, payload: { type: TransactionType, amount: 
     try {
         const sender = await Agent.findById(userId).session(session);
         if (!sender) {
-            throw new AppError(404, "Sender not found");
+            throw new AppError(404, "Agent not found");
         }
         if (sender.isApproved === 'NOT_APPROVED') {
             throw new AppError(404, "Sorry your account is not approved yet for transaction..Wait untill admin approve your account!")
@@ -188,7 +188,7 @@ const cashIn = async (userId: string, payload: { type: TransactionType, amount: 
         }
         const senderWallet = await Wallet.findById(sender.wallet).session(session)
         if (!senderWallet) {
-            throw new AppError(404, "Sender wallet not available");
+            throw new AppError(404, "Your wallet not available");
         }
 
         if (senderWallet.isActive === 'INACTIVE') {
@@ -272,11 +272,113 @@ const cashIn = async (userId: string, payload: { type: TransactionType, amount: 
     }
 }
 
+const cashOut = async (userId: string, payload: { type: TransactionType, amount: number; senderEmail: string }) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const receiverAgent = await Agent.findById(userId).session(session);
+        if (!receiverAgent) {
+            throw new AppError(404, "Agent not found");
+        }
+        if (receiverAgent.isApproved === 'NOT_APPROVED') {
+            throw new AppError(404, "Sorry your account is not approved yet for transaction..Wait untill admin approve your account!")
+        }
+        if (receiverAgent.isApproved === 'SUSPEND') {
+            throw new AppError(404, "Sorry your account is suspended.Contact with admin for more details!")
+        }
+        const receiverAgentWalllet = await Wallet.findById(receiverAgent.wallet).session(session)
+        if (!receiverAgentWalllet) {
+            throw new AppError(404, "Your wallet is not available");
+        }
+
+        if (receiverAgentWalllet.isActive === 'INACTIVE') {
+            throw new AppError(404, "Sorry your wallet is inactive")
+        }
+
+        if (receiverAgentWalllet.isActive === 'BLOCKED') {
+            throw new AppError(404, "Sorry your wallet is blocked..cantact with admin for more details")
+        }
+
+        const senderUser = await User.findOne({ email: payload.senderEmail }).session(session);
+        if (!senderUser) {
+            throw new AppError(404, "Receiver not found");
+        }
+        if (senderUser.status === 'INACTIVE') {
+            throw new AppError(404, "Sorry receiver account is inactive")
+        }
+
+        if (senderUser.status === 'BLOCKED') {
+            throw new AppError(404, "Sorry receiver is blocked")
+        }
+        const senderUserWallet = await Wallet.findById(senderUser.wallet).session(session)
+        if (!senderUserWallet) {
+            throw new AppError(404, "Receiver wallet not available");
+        }
+
+        if (senderUserWallet.isActive === 'INACTIVE') {
+            throw new AppError(404, "Sorry your account is inactive")
+        }
+
+        if (senderUserWallet.isActive === 'BLOCKED') {
+            throw new AppError(404, "Sorry your account is blocked..cantact with admin for more details")
+        }
+
+        if (senderUserWallet.balance < payload.amount) {
+            throw new AppError(400, "Insufficient balance");
+        }
+
+        receiverAgentWalllet.balance += payload.amount;
+        senderUserWallet.balance -= payload.amount;
+
+        await receiverAgentWalllet.save({ session });
+        await senderUserWallet.save({ session });
+
+        const result = await Transaction.create(
+            [
+                {
+                    type: TransactionType.CASH_OUT,
+                    amount: payload.amount,
+                    initiatorModel: "Agent",
+                    senderId: senderUser._id,
+                    receiverId: receiverAgent._id,
+                    status: TransactionStatus.COMPLETED,
+                },
+            ],
+            { session }
+        );
+
+        await Transaction.create(
+            [
+                {
+                    type: TransactionType.SEND,
+                    amount: payload.amount,
+                    initiatorModel: "User",
+                    senderId: senderUser._id,
+                    receiverId: receiverAgent._id,
+                    status: TransactionStatus.COMPLETED,
+                },
+            ],
+            { session }
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return { success: true, message: "Cash Out successfull", result };
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
+    }
+}
+
 
 
 export const TransactionService = {
     addMoney,
     withdrawMoney,
     sendMoney,
-    cashIn
+    cashIn,
+    cashOut
 }

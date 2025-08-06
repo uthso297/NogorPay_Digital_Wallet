@@ -36,6 +36,6 @@ export const cashInZodSchema = baseTransactionSchema.extend({
 
 export const cashOutZodSchema = baseTransactionSchema.extend({
     type: z.literal(TransactionType.CASH_OUT),
-    receiverEmail: z
+    senderEmail: z
         .string({ error: "Receiver email is required" })
 });
