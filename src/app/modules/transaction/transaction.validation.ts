@@ -30,10 +30,12 @@ export const sendMoneyZodSchema = baseTransactionSchema.extend({
 
 export const cashInZodSchema = baseTransactionSchema.extend({
     type: z.literal(TransactionType.CASH_IN),
-    receiverWallet: z.string({ error: "Receiver wallet ID is required" }),
+    receiverEmail: z
+        .string({ error: "Receiver email is required" })
 });
 
 export const cashOutZodSchema = baseTransactionSchema.extend({
     type: z.literal(TransactionType.CASH_OUT),
-    senderWallet: z.string({ error: "Sender wallet ID is required" }),
+    receiverEmail: z
+        .string({ error: "Receiver email is required" })
 });
