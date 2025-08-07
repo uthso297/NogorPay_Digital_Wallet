@@ -1,0 +1,18 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TranscationRoutes = void 0;
+const express_1 = require("express");
+const validateRequest_1 = require("../../middlewars/validateRequest");
+const transaction_validation_1 = require("./transaction.validation");
+const chekAuth_1 = require("../../middlewars/chekAuth");
+const user_interface_1 = require("../user/user.interface");
+const transaction_controller_1 = require("./transaction.controller");
+const router = (0, express_1.Router)();
+router.get('/user/me', (0, chekAuth_1.checkAuth)(user_interface_1.Role.USER), transaction_controller_1.TransactionController.getUserTransaction);
+router.get('/agent/me', (0, chekAuth_1.checkAuth)(user_interface_1.Role.AGENT), transaction_controller_1.TransactionController.getAgentTransaction);
+router.post('/user/addMoney', (0, chekAuth_1.checkAuth)(user_interface_1.Role.USER), (0, validateRequest_1.validateRequest)(transaction_validation_1.addMoneyZodSchema), transaction_controller_1.TransactionController.addMoney);
+router.post('/user/withdraw', (0, chekAuth_1.checkAuth)(user_interface_1.Role.USER), (0, validateRequest_1.validateRequest)(transaction_validation_1.withdrawZodSchema), transaction_controller_1.TransactionController.withdrawMoney);
+router.post('/user/send', (0, chekAuth_1.checkAuth)(user_interface_1.Role.USER), (0, validateRequest_1.validateRequest)(transaction_validation_1.sendMoneyZodSchema), transaction_controller_1.TransactionController.sendMoney);
+router.post('/agent/cashIn', (0, chekAuth_1.checkAuth)(user_interface_1.Role.AGENT), (0, validateRequest_1.validateRequest)(transaction_validation_1.cashInZodSchema), transaction_controller_1.TransactionController.cashIn);
+router.post('/agent/cashOut', (0, chekAuth_1.checkAuth)(user_interface_1.Role.AGENT), (0, validateRequest_1.validateRequest)(transaction_validation_1.cashOutZodSchema), transaction_controller_1.TransactionController.cashOut);
+exports.TranscationRoutes = router;

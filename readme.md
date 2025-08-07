@@ -111,20 +111,22 @@
 - Use **Postman** to test all routes  
 - **Enable cookies** to test authentication  
 - Set base URL: `http://localhost:5000/api`  
-- Login to access protected routes  
+- Login to access protected routes 
+- ADMIN_EMAIL=admin@admin.com
+- ADMIN_PASS=admin@NogorPay123
 
 ---
 
 ## ⚙️ Setup Instructions
 
 ### Env config:
-PORT=5000
-DATABASE_URL=your_mongo_uri
-BCRYPT_SALT_ROUND=10
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRES_IN=1d
-ADMIN_EMAIL=your_admin_email
-ADMIN_PASS=your_admin_password
+- PORT=5000
+- DATABASE_URL=your_mongo_uri
+- BCRYPT_SALT_ROUND=10
+- JWT_SECRET=your_jwt_secret
+- JWT_EXPIRES_IN=1d
+- ADMIN_EMAIL=your_admin_email
+- ADMIN_PASS=your_admin_password
 
 ### Clone the Repository
 

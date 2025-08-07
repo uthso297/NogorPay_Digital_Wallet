@@ -6,7 +6,7 @@ import { Wallet } from "../wallet/wallet.model";
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = await User.find({}).select('-password')
+        const users = await User.find({ email: { $ne: 'admin@admin.com' } }).select('-password')
         if (!users) {
             throw new AppError(401, 'No user found')
         }

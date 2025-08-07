@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AdminRoutes = void 0;
+const express_1 = require("express");
+const chekAuth_1 = require("../../middlewars/chekAuth");
+const user_interface_1 = require("../user/user.interface");
+const admin_controller_1 = require("./admin.controller");
+const router = (0, express_1.Router)();
+router.get('/users', (0, chekAuth_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.AdminController.getUsers);
+router.get('/agents', (0, chekAuth_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.AdminController.getAgents);
+router.get('/wallets', (0, chekAuth_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.AdminController.getWallets);
+router.post('/wallet/block/:id', (0, chekAuth_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.AdminController.blockWallet);
+router.post('/wallet/unblock/:id', (0, chekAuth_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.AdminController.unblockWallet);
+router.post('/agent/approve/:id', (0, chekAuth_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.AdminController.approveAgent);
+router.post('/agent/suspend/:id', (0, chekAuth_1.checkAuth)(user_interface_1.Role.ADMIN), admin_controller_1.AdminController.suspendAgent);
+exports.AdminRoutes = router;

@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentRoutes = void 0;
+const express_1 = require("express");
+const validateRequest_1 = require("../../middlewars/validateRequest");
+const agent_validation_1 = require("./agent.validation");
+const agent_controller_1 = require("./agent.controller");
+const router = (0, express_1.Router)();
+router.post('/register', (0, validateRequest_1.validateRequest)(agent_validation_1.createAgentZodSchema), agent_controller_1.AgentController.createAgent);
+exports.AgentRoutes = router;
