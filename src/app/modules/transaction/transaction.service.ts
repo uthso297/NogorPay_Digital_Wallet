@@ -227,11 +227,14 @@ const cashIn = async (userId: string, payload: { type: TransactionType, amount: 
             throw new AppError(400, "Insufficient balance");
         }
 
+        const comission = (payload.amount / 1000) * (sender.commissionRate ?? 0)
         senderWallet.balance -= payload.amount;
+        senderWallet.balance += comission;
         receiverWallet.balance += payload.amount;
 
         await senderWallet.save({ session });
         await receiverWallet.save({ session });
+
 
         const result = await Transaction.create(
             [
@@ -241,6 +244,7 @@ const cashIn = async (userId: string, payload: { type: TransactionType, amount: 
                     initiatorModel: "Agent",
                     senderId: sender._id,
                     receiverId: receiver._id,
+                    comission: comission,
                     status: TransactionStatus.COMPLETED,
                 },
             ],
@@ -328,7 +332,10 @@ const cashOut = async (userId: string, payload: { type: TransactionType, amount:
             throw new AppError(400, "Insufficient balance");
         }
 
+        const comission = (payload.amount / 1000) * (receiverAgent.commissionRate ?? 0)
+
         receiverAgentWalllet.balance += payload.amount;
+        receiverAgentWalllet.balance += comission;
         senderUserWallet.balance -= payload.amount;
 
         await receiverAgentWalllet.save({ session });
@@ -342,6 +349,7 @@ const cashOut = async (userId: string, payload: { type: TransactionType, amount:
                     initiatorModel: "Agent",
                     senderId: senderUser._id,
                     receiverId: receiverAgent._id,
+                    comission: comission,
                     status: TransactionStatus.COMPLETED,
                 },
             ],

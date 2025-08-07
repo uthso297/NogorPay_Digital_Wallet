@@ -23,8 +23,7 @@ export interface ITransaction {
     receiverId?: Types.ObjectId;
     initiatorIdAgent?: Types.ObjectId;
     initiatorModel: "User" | "Agent";
-    // senderWallet?: Types.ObjectId;
-    // receiverWallet?: Types.ObjectId;
+    comission?: number
     status: TransactionStatus;
     timestamp: Date;
 }

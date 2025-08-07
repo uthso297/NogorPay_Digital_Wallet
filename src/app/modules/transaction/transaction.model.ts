@@ -9,6 +9,7 @@ const transactionSchema = new Schema<ITransaction>({
   initiatorModel: { type: String, required: true, enum: ["User", "Agent"] },
   senderId: { type: Schema.Types.ObjectId, ref: "User" },
   receiverId: { type: Schema.Types.ObjectId, ref: "User" },
+  comission: { type: Number },
   status: { type: String, enum: Object.values(TransactionStatus), default: TransactionStatus.COMPLETED },
   timestamp: { type: Date, default: Date.now }
 });
