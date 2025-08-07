@@ -39,6 +39,24 @@ const getUserTransaction = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
+const getAgentTransaction = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { userId } = req.user as JwtPayload
+        const transactions = await Transaction.find({
+            $or: [
+                { $and: [{ senderId: userId }, { type: 'CASH_IN' }] },
+
+                { $and: [{ receiverId: userId }, { type: 'CASH_OUT' }] },
+            ],
+        }).sort({ timestamp: -1 });
+        res.status(200).json({
+            data: transactions
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 const withdrawMoney = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = await TransactionService.withdrawMoney(req.body, req.user as JwtPayload);
@@ -89,5 +107,6 @@ export const TransactionController = {
     withdrawMoney,
     sendMoney,
     cashIn,
-    cashOut
+    cashOut,
+    getAgentTransaction
 }

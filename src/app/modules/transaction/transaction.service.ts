@@ -21,6 +21,17 @@ const addMoney = async (body: Partial<ITransaction>, user: JwtPayload) => {
             throw new AppError(404, "User not found");
         }
 
+        if (userInfo.status === 'INACTIVE') {
+
+            throw new AppError(404, "Your account is inactive...please contact with admin");
+
+        }
+        if (userInfo.status === 'BLOCKED') {
+
+            throw new AppError(404, "Your account is blocked...please contact with admin");
+
+        }
+
         const { amount } = body
         if (!amount || amount <= 0) {
             throw new AppError(404, "Invalid amount");
@@ -29,6 +40,13 @@ const addMoney = async (body: Partial<ITransaction>, user: JwtPayload) => {
         const walletInfo = await Wallet.findById(userInfo.wallet).session(session)
         if (!walletInfo) {
             throw new Error("Wallet not found");
+        }
+        if (walletInfo.isActive === 'INACTIVE') {
+            throw new AppError(404, "Sorry your wallet is inactive")
+        }
+
+        if (walletInfo.isActive === 'BLOCKED') {
+            throw new AppError(404, "Sorry your wallet is blocked..cantact with admin for more details")
         }
         walletInfo.balance += amount;
         await walletInfo.save({ session })
@@ -65,6 +83,15 @@ const withdrawMoney = async (body: Partial<ITransaction>, user: JwtPayload) => {
             throw new AppError(404, "User or wallet not found");
         }
 
+        if (userInfo.status === 'INACTIVE') {
+            throw new AppError(404, "Your account is inactive...please contact with admin");
+        }
+
+        if (userInfo.status === 'BLOCKED') {
+            throw new AppError(404, "Your account is blocked...please contact with admin");
+        }
+
+
         const { amount } = body
         if (!amount || amount <= 0) {
             throw new AppError(404, "Invalid amount");
@@ -73,6 +100,13 @@ const withdrawMoney = async (body: Partial<ITransaction>, user: JwtPayload) => {
         const walletInfo = await Wallet.findById(userInfo.wallet).session(session)
         if (!walletInfo) {
             throw new AppError(404, "Wallet not found");
+        }
+        if (walletInfo.isActive === 'INACTIVE') {
+            throw new AppError(404, "Sorry your wallet is inactive")
+        }
+
+        if (walletInfo.isActive === 'BLOCKED') {
+            throw new AppError(404, "Sorry your wallet is blocked..cantact with admin for more details")
         }
         if (walletInfo.balance < amount) {
             throw new AppError(404, "Insufficient amount");
@@ -108,19 +142,56 @@ const sendMoney = async (userId: string, payload: { type: TransactionType, amoun
         if (!sender) {
             throw new AppError(404, "Sender not found");
         }
+
+        if (sender.status === 'INACTIVE') {
+            throw new AppError(404, "Your account is inactive...please contact with admin");
+
+        }
+        if (sender.status === 'BLOCKED') {
+            throw new AppError(404, "Your account is blocked...please contact with admin");
+
+        }
+
+
         const senderWallet = await Wallet.findById(sender.wallet).session(session)
         if (!senderWallet) {
             throw new AppError(404, "Sender wallet not available");
+        }
+
+        if (senderWallet.isActive === 'INACTIVE') {
+            throw new AppError(404, "Sorry your wallet is inactive")
+        }
+
+        if (senderWallet.isActive === 'BLOCKED') {
+            throw new AppError(404, "Sorry your wallet is blocked..cantact with admin for more details")
         }
 
         const receiver = await User.findOne({ email: payload.receiverEmail }).session(session);
         if (!receiver) {
             throw new AppError(404, "Receiver not found");
         }
+
+        if (receiver.status === 'INACTIVE') {
+            throw new AppError(404, "Sorry receiver account is inactive");
+
+        }
+        if (receiver.status === 'BLOCKED') {
+
+            throw new AppError(404, "Sorry receiver account is blocked");
+        }
+
         const receiverWallet = await Wallet.findById(receiver.wallet).session(session)
         if (!receiverWallet) {
             throw new AppError(404, "Receiver wallet not available");
         }
+        if (receiverWallet.isActive === 'INACTIVE') {
+            throw new AppError(404, "Sorry your wallet is inactive")
+        }
+
+        if (receiverWallet.isActive === 'BLOCKED') {
+            throw new AppError(404, "Sorry your wallet is blocked..cantact with admin for more details")
+        }
+
 
         if (senderWallet.balance < payload.amount) {
             throw new AppError(400, "Insufficient balance");
@@ -216,11 +287,11 @@ const cashIn = async (userId: string, payload: { type: TransactionType, amount: 
         }
 
         if (receiverWallet.isActive === 'INACTIVE') {
-            throw new AppError(404, "Sorry your account is inactive")
+            throw new AppError(404, "Sorry receiver wallet is inactive")
         }
 
         if (receiverWallet.isActive === 'BLOCKED') {
-            throw new AppError(404, "Sorry your account is blocked..cantact with admin for more details")
+            throw new AppError(404, "Sorry receiver wallet is blocked..cantact with admin for more details")
         }
 
         if (senderWallet.balance < payload.amount) {
@@ -306,26 +377,26 @@ const cashOut = async (userId: string, payload: { type: TransactionType, amount:
 
         const senderUser = await User.findOne({ email: payload.senderEmail }).session(session);
         if (!senderUser) {
-            throw new AppError(404, "Receiver not found");
+            throw new AppError(404, "Sender not found");
         }
         if (senderUser.status === 'INACTIVE') {
-            throw new AppError(404, "Sorry receiver account is inactive")
+            throw new AppError(404, "Sorry Sender account is inactive")
         }
 
         if (senderUser.status === 'BLOCKED') {
-            throw new AppError(404, "Sorry receiver is blocked")
+            throw new AppError(404, "Sorry Sender is blocked")
         }
         const senderUserWallet = await Wallet.findById(senderUser.wallet).session(session)
         if (!senderUserWallet) {
-            throw new AppError(404, "Receiver wallet not available");
+            throw new AppError(404, "Sender wallet not available");
         }
 
         if (senderUserWallet.isActive === 'INACTIVE') {
-            throw new AppError(404, "Sorry your account is inactive")
+            throw new AppError(404, "Sorry Sender wallet is inactive")
         }
 
         if (senderUserWallet.isActive === 'BLOCKED') {
-            throw new AppError(404, "Sorry your account is blocked..cantact with admin for more details")
+            throw new AppError(404, "Sorry Sender wallet is blocked..cantact with admin for more details")
         }
 
         if (senderUserWallet.balance < payload.amount) {
