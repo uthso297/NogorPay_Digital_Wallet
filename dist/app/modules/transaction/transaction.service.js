@@ -30,24 +30,24 @@ const addMoney = (body, user) => __awaiter(void 0, void 0, void 0, function* () 
             throw new AppError_1.default(404, "User not found");
         }
         if (userInfo.status === 'INACTIVE') {
-            throw new AppError_1.default(404, "Your account is inactive...please contact with admin");
+            throw new AppError_1.default(403, "Your account is inactive...please contact with admin");
         }
         if (userInfo.status === 'BLOCKED') {
-            throw new AppError_1.default(404, "Your account is blocked...please contact with admin");
+            throw new AppError_1.default(403, "Your account is blocked...please contact with admin");
         }
         const { amount } = body;
         if (!amount || amount <= 0) {
-            throw new AppError_1.default(404, "Invalid amount");
+            throw new AppError_1.default(400, "Invalid amount");
         }
         const walletInfo = yield wallet_model_1.Wallet.findById(userInfo.wallet).session(session);
         if (!walletInfo) {
             throw new Error("Wallet not found");
         }
         if (walletInfo.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry your wallet is inactive");
+            throw new AppError_1.default(403, "Sorry your wallet is inactive");
         }
         if (walletInfo.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry your wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry your wallet is blocked..cantact with admin for more details");
         }
         walletInfo.balance += amount;
         yield walletInfo.save({ session });
@@ -66,7 +66,7 @@ const addMoney = (body, user) => __awaiter(void 0, void 0, void 0, function* () 
     catch (error) {
         yield session.abortTransaction();
         session.endSession();
-        throw new AppError_1.default(404, 'Transaction failed');
+        throw new AppError_1.default(500, 'Transaction failed');
     }
 });
 const withdrawMoney = (body, user) => __awaiter(void 0, void 0, void 0, function* () {
@@ -79,24 +79,24 @@ const withdrawMoney = (body, user) => __awaiter(void 0, void 0, void 0, function
             throw new AppError_1.default(404, "User or wallet not found");
         }
         if (userInfo.status === 'INACTIVE') {
-            throw new AppError_1.default(404, "Your account is inactive...please contact with admin");
+            throw new AppError_1.default(403, "Your account is inactive...please contact with admin");
         }
         if (userInfo.status === 'BLOCKED') {
-            throw new AppError_1.default(404, "Your account is blocked...please contact with admin");
+            throw new AppError_1.default(403, "Your account is blocked...please contact with admin");
         }
         const { amount } = body;
         if (!amount || amount <= 0) {
-            throw new AppError_1.default(404, "Invalid amount");
+            throw new AppError_1.default(400, "Invalid amount");
         }
         const walletInfo = yield wallet_model_1.Wallet.findById(userInfo.wallet).session(session);
         if (!walletInfo) {
             throw new AppError_1.default(404, "Wallet not found");
         }
         if (walletInfo.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry your wallet is inactive");
+            throw new AppError_1.default(403, "Sorry your wallet is inactive");
         }
         if (walletInfo.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry your wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry your wallet is blocked..cantact with admin for more details");
         }
         if (walletInfo.balance < amount) {
             throw new AppError_1.default(404, "Insufficient amount");
@@ -130,40 +130,40 @@ const sendMoney = (userId, payload) => __awaiter(void 0, void 0, void 0, functio
             throw new AppError_1.default(404, "Sender not found");
         }
         if (sender.status === 'INACTIVE') {
-            throw new AppError_1.default(404, "Your account is inactive...please contact with admin");
+            throw new AppError_1.default(403, "Your account is inactive...please contact with admin");
         }
         if (sender.status === 'BLOCKED') {
-            throw new AppError_1.default(404, "Your account is blocked...please contact with admin");
+            throw new AppError_1.default(403, "Your account is blocked...please contact with admin");
         }
         const senderWallet = yield wallet_model_1.Wallet.findById(sender.wallet).session(session);
         if (!senderWallet) {
             throw new AppError_1.default(404, "Sender wallet not available");
         }
         if (senderWallet.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry your wallet is inactive");
+            throw new AppError_1.default(403, "Sorry your wallet is inactive");
         }
         if (senderWallet.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry your wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry your wallet is blocked..cantact with admin for more details");
         }
         const receiver = yield user_moel_1.User.findOne({ email: payload.receiverEmail }).session(session);
         if (!receiver) {
             throw new AppError_1.default(404, "Receiver not found");
         }
         if (receiver.status === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry receiver account is inactive");
+            throw new AppError_1.default(403, "Sorry receiver account is inactive");
         }
         if (receiver.status === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry receiver account is blocked");
+            throw new AppError_1.default(403, "Sorry receiver account is blocked");
         }
         const receiverWallet = yield wallet_model_1.Wallet.findById(receiver.wallet).session(session);
         if (!receiverWallet) {
-            throw new AppError_1.default(404, "Receiver wallet not available");
+            throw new AppError_1.default(403, "Receiver wallet not available");
         }
         if (receiverWallet.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry your wallet is inactive");
+            throw new AppError_1.default(403, "Sorry your wallet is inactive");
         }
         if (receiverWallet.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry your wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry your wallet is blocked..cantact with admin for more details");
         }
         if (senderWallet.balance < payload.amount) {
             throw new AppError_1.default(400, "Insufficient balance");
@@ -212,40 +212,40 @@ const cashIn = (userId, payload) => __awaiter(void 0, void 0, void 0, function* 
             throw new AppError_1.default(404, "Agent not found");
         }
         if (sender.isApproved === 'NOT_APPROVED') {
-            throw new AppError_1.default(404, "Sorry your account is not approved yet for transaction..Wait untill admin approve your account!");
+            throw new AppError_1.default(403, "Sorry your account is not approved yet for transaction..Wait untill admin approve your account!");
         }
         if (sender.isApproved === 'SUSPEND') {
-            throw new AppError_1.default(404, "Sorry your account is suspended.Contact with admin for more details!");
+            throw new AppError_1.default(403, "Sorry your account is suspended.Contact with admin for more details!");
         }
         const senderWallet = yield wallet_model_1.Wallet.findById(sender.wallet).session(session);
         if (!senderWallet) {
             throw new AppError_1.default(404, "Your wallet not available");
         }
         if (senderWallet.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry your wallet is inactive");
+            throw new AppError_1.default(403, "Sorry your wallet is inactive");
         }
         if (senderWallet.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry your wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry your wallet is blocked..cantact with admin for more details");
         }
         const receiver = yield user_moel_1.User.findOne({ email: payload.receiverEmail }).session(session);
         if (!receiver) {
             throw new AppError_1.default(404, "Receiver not found");
         }
         if (receiver.status === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry receiver account is inactive");
+            throw new AppError_1.default(403, "Sorry receiver account is inactive");
         }
         if (receiver.status === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry receiver is blocked");
+            throw new AppError_1.default(403, "Sorry receiver is blocked");
         }
         const receiverWallet = yield wallet_model_1.Wallet.findById(receiver.wallet).session(session);
         if (!receiverWallet) {
             throw new AppError_1.default(404, "Receiver wallet not available");
         }
         if (receiverWallet.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry receiver wallet is inactive");
+            throw new AppError_1.default(403, "Sorry receiver wallet is inactive");
         }
         if (receiverWallet.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry receiver wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry receiver wallet is blocked..cantact with admin for more details");
         }
         if (senderWallet.balance < payload.amount) {
             throw new AppError_1.default(400, "Insufficient balance");
@@ -297,40 +297,40 @@ const cashOut = (userId, payload) => __awaiter(void 0, void 0, void 0, function*
             throw new AppError_1.default(404, "Agent not found");
         }
         if (receiverAgent.isApproved === 'NOT_APPROVED') {
-            throw new AppError_1.default(404, "Sorry your account is not approved yet for transaction..Wait untill admin approve your account!");
+            throw new AppError_1.default(403, "Sorry your account is not approved yet for transaction..Wait untill admin approve your account!");
         }
         if (receiverAgent.isApproved === 'SUSPEND') {
-            throw new AppError_1.default(404, "Sorry your account is suspended.Contact with admin for more details!");
+            throw new AppError_1.default(403, "Sorry your account is suspended.Contact with admin for more details!");
         }
         const receiverAgentWalllet = yield wallet_model_1.Wallet.findById(receiverAgent.wallet).session(session);
         if (!receiverAgentWalllet) {
             throw new AppError_1.default(404, "Your wallet is not available");
         }
         if (receiverAgentWalllet.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry your wallet is inactive");
+            throw new AppError_1.default(403, "Sorry your wallet is inactive");
         }
         if (receiverAgentWalllet.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry your wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry your wallet is blocked..cantact with admin for more details");
         }
         const senderUser = yield user_moel_1.User.findOne({ email: payload.senderEmail }).session(session);
         if (!senderUser) {
             throw new AppError_1.default(404, "Sender not found");
         }
         if (senderUser.status === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry Sender account is inactive");
+            throw new AppError_1.default(403, "Sorry Sender account is inactive");
         }
         if (senderUser.status === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry Sender is blocked");
+            throw new AppError_1.default(403, "Sorry Sender is blocked");
         }
         const senderUserWallet = yield wallet_model_1.Wallet.findById(senderUser.wallet).session(session);
         if (!senderUserWallet) {
             throw new AppError_1.default(404, "Sender wallet not available");
         }
         if (senderUserWallet.isActive === 'INACTIVE') {
-            throw new AppError_1.default(404, "Sorry Sender wallet is inactive");
+            throw new AppError_1.default(403, "Sorry Sender wallet is inactive");
         }
         if (senderUserWallet.isActive === 'BLOCKED') {
-            throw new AppError_1.default(404, "Sorry Sender wallet is blocked..cantact with admin for more details");
+            throw new AppError_1.default(403, "Sorry Sender wallet is blocked..cantact with admin for more details");
         }
         if (senderUserWallet.balance < payload.amount) {
             throw new AppError_1.default(400, "Insufficient balance");

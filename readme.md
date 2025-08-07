@@ -12,6 +12,10 @@
 
 ---
 
+### **Deployment Details**  
+- *Project Name:** NogorPay  
+- **Live Website URL:** [https://l2-b5-a5-uthso.vercel.app/](https://l2-b5-a5-uthso.vercel.app/)  
+
 ## 🛠️ Tech Stack
 
 ### Backend

@@ -30,7 +30,7 @@ const agent_model_1 = require("../agent/agent.model");
 const wallet_model_1 = require("../wallet/wallet.model");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const users = yield user_moel_1.User.find({}).select('-password');
+        const users = yield user_moel_1.User.find({ email: { $ne: 'admin@admin.com' } }).select('-password');
         if (!users) {
             throw new AppError_1.default(401, 'No user found');
         }
